@@ -1,0 +1,1569 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.0
+-- Dumped by pg_dump version 12.0
+
+-- Started on 2019-12-19 20:17:37 -03
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE "postgres";
+--
+-- TOC entry 3190 (class 1262 OID 13637)
+-- Name: postgres; Type: DATABASE; Schema: -; Owner: -
+--
+
+CREATE DATABASE "postgres" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
+
+
+\connect "postgres"
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 1 (class 3079 OID 16384)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "adminpack" WITH SCHEMA "pg_catalog";
+
+
+SET default_table_access_method = "heap";
+
+--
+-- TOC entry 204 (class 1259 OID 24830)
+-- Name: evento; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE "public"."evento" (
+    "id" integer NOT NULL,
+    "descricao" character varying,
+    "datahora" timestamp without time zone,
+    "local" character varying,
+    "quantidadelugares" integer,
+    "iniciovenda" timestamp without time zone,
+    "fimvenda" timestamp without time zone
+);
+
+
+--
+-- TOC entry 203 (class 1259 OID 24828)
+-- Name: evento_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "public"."evento_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 3191 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: evento_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "public"."evento_id_seq" OWNED BY "public"."evento"."id";
+
+
+--
+-- TOC entry 211 (class 1259 OID 24940)
+-- Name: grouptable; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE "public"."grouptable" (
+    "id" integer NOT NULL,
+    "groupid" character varying NOT NULL
+);
+
+
+--
+-- TOC entry 208 (class 1259 OID 24865)
+-- Name: lugar; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE "public"."lugar" (
+    "id" integer NOT NULL,
+    "status" character varying,
+    "id_evento" integer,
+    "versao" integer,
+    "numero" integer,
+    "preco" numeric(6,2),
+    "token" character varying
+);
+
+
+--
+-- TOC entry 207 (class 1259 OID 24863)
+-- Name: lugar_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "public"."lugar_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 3192 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: lugar_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "public"."lugar_id_seq" OWNED BY "public"."lugar"."id";
+
+
+--
+-- TOC entry 210 (class 1259 OID 24888)
+-- Name: pedido; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE "public"."pedido" (
+    "id" integer NOT NULL,
+    "id_comprador" integer NOT NULL,
+    "id_evento" integer NOT NULL,
+    "token" character varying NOT NULL
+);
+
+
+--
+-- TOC entry 209 (class 1259 OID 24886)
+-- Name: pedido_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "public"."pedido_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 3193 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: pedido_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "public"."pedido_id_seq" OWNED BY "public"."pedido"."id";
+
+
+--
+-- TOC entry 206 (class 1259 OID 24854)
+-- Name: usuario; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE "public"."usuario" (
+    "id" integer NOT NULL,
+    "nome" character varying,
+    "cpf" character varying,
+    "email" character varying,
+    "senha" character varying
+);
+
+
+--
+-- TOC entry 205 (class 1259 OID 24852)
+-- Name: usuario_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "public"."usuario_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 3194 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: usuario_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "public"."usuario_id_seq" OWNED BY "public"."usuario"."id";
+
+
+--
+-- TOC entry 3034 (class 2604 OID 24833)
+-- Name: evento id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."evento" ALTER COLUMN "id" SET DEFAULT "nextval"('"public"."evento_id_seq"'::"regclass");
+
+
+--
+-- TOC entry 3036 (class 2604 OID 24868)
+-- Name: lugar id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."lugar" ALTER COLUMN "id" SET DEFAULT "nextval"('"public"."lugar_id_seq"'::"regclass");
+
+
+--
+-- TOC entry 3037 (class 2604 OID 24891)
+-- Name: pedido id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."pedido" ALTER COLUMN "id" SET DEFAULT "nextval"('"public"."pedido_id_seq"'::"regclass");
+
+
+--
+-- TOC entry 3035 (class 2604 OID 24857)
+-- Name: usuario id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."usuario" ALTER COLUMN "id" SET DEFAULT "nextval"('"public"."usuario_id_seq"'::"regclass");
+
+
+--
+-- TOC entry 3177 (class 0 OID 24830)
+-- Dependencies: 204
+-- Data for Name: evento; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (11, 'show do indiana jones', '2016-01-23 21:34:55', 'IFRS campus lulalivre', 7, '2016-01-25 21:34:55', '2016-01-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (12, 'show do tubarino', '2016-08-24 21:34:55', 'FURG campus bolsonaro', 4, '2016-03-25 21:34:55', '2016-05-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (13, 'casamento da jub', '2019-08-30 21:34:55', 'edificio casablanca', 7, '2019-07-25 21:34:55', '2019-08-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (14, 'casamento da analiz', '2019-08-30 21:34:55', 'edificio bucaneira', 10, '2019-07-25 21:34:55', '2019-08-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (21, 'terra de palmera', '1990-09-09 19:00:00', 'serra gaucha', 0, '1990-08-08 19:00:00', '1990-08-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (22, 'stream do axt', '1990-09-09 19:00:00', 'pelotas', 0, '1990-08-08 19:00:00', '1990-08-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (23, 'live do yoda', '1990-09-09 19:00:00', 'cassino', 0, '1990-08-08 19:00:00', '1990-08-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (24, 'live do yoda', '1990-09-09 19:00:00', 'cassino', 0, '1990-08-08 19:00:00', '1990-08-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (25, 'terere', '1990-08-08 10:00:00', 'rio grande', 0, '1990-07-07 19:00:00', '1990-07-08 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (26, 'terere', '1990-08-08 10:00:00', 'rio grande', 0, '1990-07-07 19:00:00', '1990-07-08 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (27, 'xererere', '1990-09-09 19:00:00', 'casa da mae joana', 0, '1990-08-08 10:00:00', '1990-08-09 10:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (28, 'xererere', '1990-09-09 19:00:00', 'casa da mae joana', 0, '1990-08-08 10:00:00', '1990-08-09 10:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (29, 'ventilador', '1990-08-08 19:00:00', 'minha cama', 0, '1990-08-07 10:00:00', '1990-08-07 11:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (30, 'tenis da loja', '1990-09-09 19:00:00', 'piracicaba', 0, '1990-08-08 19:00:00', '1990-08-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (31, 'show da vovo', '1990-09-09 18:00:00', 'mczada', 0, '1990-09-08 19:00:00', '1990-09-09 11:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (32, 'show da mesa', '1990-09-09 19:00:00', 'cassino', 0, '1990-09-05 10:00:00', '1990-09-06 10:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (33, 'hora dda morte', '2019-08-30 21:34:55', 'casa blan', 10, '2019-07-25 21:34:55', '2019-08-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (34, 'show da acetona', '1990-09-09 19:00:00', 'peixeira', 0, '1990-09-08 18:00:00', '1990-09-08 20:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (35, 'celular', '1990-09-08 19:00:00', 'ninino', 0, '1990-09-07 19:00:00', '1990-09-08 11:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (37, 'impressoa', '1990-10-09 19:00:00', 'popopo', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (38, 'recepcao', '1990-10-09 19:00:00', 'felicia do norte', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (39, 'chimas1', '1990-10-09 19:00:00', 'chimas1', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (40, 'oiteste', '1990-10-09 19:00:00', 'oi informa', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (41, 'chimas2', '2019-08-30 21:34:55', 'chimas2', 10, '2019-07-25 21:34:55', '2019-08-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (42, 'alianca', '1990-10-09 19:00:00', 'compasso', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (43, 'chave do carro', '1990-10-09 19:00:00', 'cima da mesa', 14, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (44, 'termica', '1990-10-09 19:00:00', 'mesa da ju', 14, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (45, 'caneca do rafa', '1990-10-09 19:00:00', 'mesa do rafa', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (46, 'garrafa verde', '1990-10-09 19:00:00', 'mesa da ju', 77, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (47, 'mouse da ju', '1990-10-09 19:00:00', 'mesa da ju', 77, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (48, 'unha da ju', '1990-10-09 19:00:00', 'mao da ju', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (49, 'pizzaria pandorato', '1990-10-09 19:00:00', 'dr nascimento', 88, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (50, 'crisciano delivery', '1990-10-09 19:00:00', 'trabalho', 88, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (51, 'automacao residencial', '1990-10-09 19:00:00', 'pc da ju', 88, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (52, 'mateira', '1990-10-09 19:00:00', 'mamama', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (53, 'pereira', '1990-10-09 19:00:00', 'casinha', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (54, 'rollyst', '1990-10-09 19:00:00', 'roll', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (55, 'oioioij', '1990-10-09 19:00:00', 'tchau', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (56, 'colorado', '1990-10-09 19:00:00', 'beirario', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (57, 'chimas3', '2019-08-30 21:34:55', 'chimas3', 10, '2019-07-25 21:34:55', '2019-08-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (58, 'chimas3', '2019-08-30 21:34:55', 'chimas3', 10, '2019-07-25 21:34:55', '2019-08-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (59, 'chimas4', '2019-08-30 21:34:55', 'chimas4', 10, '2019-07-25 21:34:55', '2019-08-25 21:34:55');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (60, 'chapeco', '1990-10-09 19:00:00', 'aviao', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (61, 'php', '1990-10-09 19:00:00', 'phpplace', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (62, 'telacheia', '1990-10-09 19:00:00', 'telinha', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (63, 'cheiro', '1990-10-09 19:00:00', 'perfume', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (64, 'fone de ouvido', '1990-10-09 19:00:00', 'orelha', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (65, 'fut', '1990-10-09 19:00:00', 'campo', 0, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (66, 'terere', '1990-10-09 19:00:00', 'frio', 177, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (67, 'chico', '1990-10-09 19:00:00', 'chicoso', 177, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (68, 'apocalipse', '1990-10-09 19:00:00', 'suaveplace', 64, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (69, 'apocalipse', '1990-10-09 19:00:00', 'marcos', 64, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (70, 'apocalipse', '1990-10-09 19:00:00', 'clareza', 64, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (71, 'sucess', '1990-10-09 19:00:00', 'sucesso', 64, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (72, 'ao contrario', '1990-10-09 19:00:00', 'contra', 89, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (73, 'Amarracao de cadarco', '1990-10-09 19:00:00', 'pe do rafael', 86, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (74, 'evento do ano', '1990-10-09 19:00:00', 'palco 2', 45, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (75, 'show do chico', '1990-10-09 19:00:00', 'rigatti', 66, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (76, 'descricao1', '1990-10-09 19:00:00', 'brasil1', 15, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (77, 'descricao1', '1990-10-09 19:00:00', 'brasil1', 15, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (78, 'kkkkkkkkkkkkk', '1990-10-09 19:00:00', 'ddddddddddddd', 14, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+INSERT INTO "public"."evento" ("id", "descricao", "datahora", "local", "quantidadelugares", "iniciovenda", "fimvenda") VALUES (79, 'hhhhhhhhhh', '1990-10-09 19:00:00', 'wwwwwwwwww', 13, '1990-09-09 19:00:00', '1990-09-09 19:00:00');
+
+
+--
+-- TOC entry 3184 (class 0 OID 24940)
+-- Dependencies: 211
+-- Data for Name: grouptable; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO "public"."grouptable" ("id", "groupid") VALUES (2, 'users');
+INSERT INTO "public"."grouptable" ("id", "groupid") VALUES (1, 'users');
+
+
+--
+-- TOC entry 3181 (class 0 OID 24865)
+-- Dependencies: 208
+-- Data for Name: lugar; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1073, 'INDISPONIVEL', 76, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1074, 'INDISPONIVEL', 76, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1075, 'INDISPONIVEL', 76, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1076, 'INDISPONIVEL', 76, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1077, 'INDISPONIVEL', 76, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1078, 'INDISPONIVEL', 76, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1079, 'INDISPONIVEL', 76, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1080, 'INDISPONIVEL', 76, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1081, 'INDISPONIVEL', 76, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1082, 'INDISPONIVEL', 76, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1083, 'INDISPONIVEL', 76, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1084, 'INDISPONIVEL', 76, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1085, 'INDISPONIVEL', 76, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1086, 'INDISPONIVEL', 76, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1087, 'INDISPONIVEL', 76, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1011, 'RESERVADO', 75, 2, 5, 56.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1063, 'INDISPONIVEL', 75, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1064, 'INDISPONIVEL', 75, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1065, 'INDISPONIVEL', 75, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1066, 'INDISPONIVEL', 75, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1067, 'INDISPONIVEL', 75, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1068, 'INDISPONIVEL', 75, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1069, 'INDISPONIVEL', 75, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1070, 'INDISPONIVEL', 75, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1071, 'INDISPONIVEL', 75, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1072, 'INDISPONIVEL', 75, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1030, 'INDISPONIVEL', 75, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1031, 'INDISPONIVEL', 75, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1032, 'INDISPONIVEL', 75, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1033, 'INDISPONIVEL', 75, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1034, 'INDISPONIVEL', 75, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1035, 'INDISPONIVEL', 75, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1088, 'INDISPONIVEL', 77, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1089, 'INDISPONIVEL', 77, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1090, 'INDISPONIVEL', 77, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1091, 'INDISPONIVEL', 77, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1092, 'INDISPONIVEL', 77, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1093, 'INDISPONIVEL', 77, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1094, 'INDISPONIVEL', 77, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1095, 'INDISPONIVEL', 77, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1096, 'INDISPONIVEL', 77, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1097, 'INDISPONIVEL', 77, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1098, 'INDISPONIVEL', 77, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1099, 'INDISPONIVEL', 77, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1100, 'INDISPONIVEL', 77, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1101, 'INDISPONIVEL', 77, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1102, 'INDISPONIVEL', 77, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1010, 'VENDIDO', 75, 3, 4, 56.00, '[B@60977ebd');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1009, 'VENDIDO', 75, 3, 3, 56.00, '[B@36cb2bbc');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1007, 'VENDIDO', 75, 3, 1, 56.00, '[B@fe12da0');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1008, 'VENDIDO', 75, 3, 2, 56.00, '[B@56eafe92');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1036, 'INDISPONIVEL', 75, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1037, 'INDISPONIVEL', 75, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1038, 'INDISPONIVEL', 75, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1039, 'INDISPONIVEL', 75, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1040, 'INDISPONIVEL', 75, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1041, 'INDISPONIVEL', 75, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1042, 'INDISPONIVEL', 75, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1043, 'INDISPONIVEL', 75, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1044, 'INDISPONIVEL', 75, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1045, 'INDISPONIVEL', 75, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1046, 'INDISPONIVEL', 75, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1047, 'INDISPONIVEL', 75, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1048, 'INDISPONIVEL', 75, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1049, 'INDISPONIVEL', 75, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1050, 'INDISPONIVEL', 75, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1051, 'INDISPONIVEL', 75, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1052, 'INDISPONIVEL', 75, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1053, 'INDISPONIVEL', 75, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1054, 'INDISPONIVEL', 75, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1055, 'INDISPONIVEL', 75, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1056, 'INDISPONIVEL', 75, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1057, 'INDISPONIVEL', 75, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1058, 'INDISPONIVEL', 75, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1059, 'INDISPONIVEL', 75, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1060, 'INDISPONIVEL', 75, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1061, 'INDISPONIVEL', 75, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1062, 'INDISPONIVEL', 75, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (67, 'INDISPONIVEL', 41, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (68, 'INDISPONIVEL', 41, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (69, 'INDISPONIVEL', 41, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (70, 'INDISPONIVEL', 49, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (71, 'INDISPONIVEL', 49, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (72, 'INDISPONIVEL', 49, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (73, 'INDISPONIVEL', 49, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (74, 'INDISPONIVEL', 49, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (75, 'INDISPONIVEL', 49, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (76, 'INDISPONIVEL', 49, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (77, 'INDISPONIVEL', 49, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (78, 'INDISPONIVEL', 49, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (79, 'INDISPONIVEL', 49, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (80, 'INDISPONIVEL', 49, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (81, 'INDISPONIVEL', 49, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (82, 'INDISPONIVEL', 49, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (83, 'INDISPONIVEL', 49, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (84, 'INDISPONIVEL', 49, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (85, 'INDISPONIVEL', 49, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (86, 'INDISPONIVEL', 49, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (87, 'INDISPONIVEL', 49, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (88, 'INDISPONIVEL', 49, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (89, 'INDISPONIVEL', 49, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (90, 'INDISPONIVEL', 49, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (91, 'INDISPONIVEL', 49, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (92, 'INDISPONIVEL', 49, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (93, 'INDISPONIVEL', 49, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (94, 'INDISPONIVEL', 49, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (95, 'INDISPONIVEL', 49, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (96, 'INDISPONIVEL', 49, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (97, 'INDISPONIVEL', 49, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (98, 'INDISPONIVEL', 49, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (99, 'INDISPONIVEL', 49, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (100, 'INDISPONIVEL', 49, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (101, 'INDISPONIVEL', 49, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (102, 'INDISPONIVEL', 49, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (103, 'INDISPONIVEL', 49, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (104, 'INDISPONIVEL', 49, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (105, 'INDISPONIVEL', 49, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (106, 'INDISPONIVEL', 49, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (107, 'INDISPONIVEL', 49, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (108, 'INDISPONIVEL', 49, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (109, 'INDISPONIVEL', 49, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (110, 'INDISPONIVEL', 49, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (111, 'INDISPONIVEL', 49, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (112, 'INDISPONIVEL', 49, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (113, 'INDISPONIVEL', 49, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (114, 'INDISPONIVEL', 49, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (115, 'INDISPONIVEL', 49, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (116, 'INDISPONIVEL', 49, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (117, 'INDISPONIVEL', 49, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (118, 'INDISPONIVEL', 49, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (119, 'INDISPONIVEL', 49, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (120, 'INDISPONIVEL', 49, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (121, 'INDISPONIVEL', 49, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (122, 'INDISPONIVEL', 49, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (123, 'INDISPONIVEL', 49, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (124, 'INDISPONIVEL', 49, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (125, 'INDISPONIVEL', 49, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (126, 'INDISPONIVEL', 49, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (127, 'INDISPONIVEL', 49, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (128, 'INDISPONIVEL', 49, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (129, 'INDISPONIVEL', 49, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (130, 'INDISPONIVEL', 49, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (131, 'INDISPONIVEL', 49, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (132, 'INDISPONIVEL', 49, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (133, 'INDISPONIVEL', 49, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (134, 'INDISPONIVEL', 49, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (135, 'INDISPONIVEL', 49, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (136, 'INDISPONIVEL', 49, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (137, 'INDISPONIVEL', 49, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (138, 'INDISPONIVEL', 49, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (139, 'INDISPONIVEL', 49, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (140, 'INDISPONIVEL', 49, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (141, 'INDISPONIVEL', 49, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (142, 'INDISPONIVEL', 49, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (143, 'INDISPONIVEL', 49, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (144, 'INDISPONIVEL', 49, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (145, 'INDISPONIVEL', 49, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (146, 'INDISPONIVEL', 49, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (147, 'INDISPONIVEL', 49, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (148, 'INDISPONIVEL', 49, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (149, 'INDISPONIVEL', 49, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (150, 'INDISPONIVEL', 49, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (151, 'INDISPONIVEL', 49, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (152, 'INDISPONIVEL', 49, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (153, 'INDISPONIVEL', 49, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (154, 'INDISPONIVEL', 49, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (155, 'INDISPONIVEL', 49, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (156, 'INDISPONIVEL', 49, 1, 87, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (157, 'INDISPONIVEL', 49, 1, 88, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (158, 'INDISPONIVEL', 50, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (159, 'INDISPONIVEL', 50, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (160, 'INDISPONIVEL', 50, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (161, 'INDISPONIVEL', 50, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (162, 'INDISPONIVEL', 50, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (163, 'INDISPONIVEL', 50, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (164, 'INDISPONIVEL', 50, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (165, 'INDISPONIVEL', 50, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (166, 'INDISPONIVEL', 50, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (167, 'INDISPONIVEL', 50, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (168, 'INDISPONIVEL', 50, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (169, 'INDISPONIVEL', 50, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (170, 'INDISPONIVEL', 50, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (171, 'INDISPONIVEL', 50, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (172, 'INDISPONIVEL', 50, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (173, 'INDISPONIVEL', 50, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (174, 'INDISPONIVEL', 50, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (175, 'INDISPONIVEL', 50, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (176, 'INDISPONIVEL', 50, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (177, 'INDISPONIVEL', 50, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (178, 'INDISPONIVEL', 50, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (179, 'INDISPONIVEL', 50, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (180, 'INDISPONIVEL', 50, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (181, 'INDISPONIVEL', 50, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (182, 'INDISPONIVEL', 50, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (183, 'INDISPONIVEL', 50, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (184, 'INDISPONIVEL', 50, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (185, 'INDISPONIVEL', 50, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (186, 'INDISPONIVEL', 50, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (187, 'INDISPONIVEL', 50, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (188, 'INDISPONIVEL', 50, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (189, 'INDISPONIVEL', 50, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (190, 'INDISPONIVEL', 50, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (191, 'INDISPONIVEL', 50, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (192, 'INDISPONIVEL', 50, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (193, 'INDISPONIVEL', 50, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (194, 'INDISPONIVEL', 50, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (195, 'INDISPONIVEL', 50, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (196, 'INDISPONIVEL', 50, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (197, 'INDISPONIVEL', 50, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (198, 'INDISPONIVEL', 50, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (199, 'INDISPONIVEL', 50, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (200, 'INDISPONIVEL', 50, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (201, 'INDISPONIVEL', 50, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (202, 'INDISPONIVEL', 50, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (203, 'INDISPONIVEL', 50, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (204, 'INDISPONIVEL', 50, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (205, 'INDISPONIVEL', 50, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (206, 'INDISPONIVEL', 50, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (207, 'INDISPONIVEL', 50, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (208, 'INDISPONIVEL', 50, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (209, 'INDISPONIVEL', 50, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (210, 'INDISPONIVEL', 50, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (211, 'INDISPONIVEL', 50, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (212, 'INDISPONIVEL', 50, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (213, 'INDISPONIVEL', 50, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (214, 'INDISPONIVEL', 50, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (215, 'INDISPONIVEL', 50, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (216, 'INDISPONIVEL', 50, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (217, 'INDISPONIVEL', 50, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (218, 'INDISPONIVEL', 50, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (219, 'INDISPONIVEL', 50, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (220, 'INDISPONIVEL', 50, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (221, 'INDISPONIVEL', 50, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (222, 'INDISPONIVEL', 50, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (223, 'INDISPONIVEL', 50, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (224, 'INDISPONIVEL', 50, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (225, 'INDISPONIVEL', 50, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (226, 'INDISPONIVEL', 50, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (227, 'INDISPONIVEL', 50, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (228, 'INDISPONIVEL', 50, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (229, 'INDISPONIVEL', 50, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (230, 'INDISPONIVEL', 50, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (231, 'INDISPONIVEL', 50, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (232, 'INDISPONIVEL', 50, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (233, 'INDISPONIVEL', 50, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (234, 'INDISPONIVEL', 50, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (235, 'INDISPONIVEL', 50, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (236, 'INDISPONIVEL', 50, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (237, 'INDISPONIVEL', 50, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (238, 'INDISPONIVEL', 50, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (239, 'INDISPONIVEL', 50, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (240, 'INDISPONIVEL', 50, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (241, 'INDISPONIVEL', 50, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (242, 'INDISPONIVEL', 50, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (243, 'INDISPONIVEL', 50, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (244, 'INDISPONIVEL', 50, 1, 87, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (245, 'INDISPONIVEL', 50, 1, 88, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (246, 'INDISPONIVEL', 51, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (247, 'INDISPONIVEL', 51, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (248, 'INDISPONIVEL', 51, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (249, 'INDISPONIVEL', 51, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (250, 'INDISPONIVEL', 51, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (251, 'INDISPONIVEL', 51, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (252, 'INDISPONIVEL', 51, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (253, 'INDISPONIVEL', 51, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (254, 'INDISPONIVEL', 51, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (255, 'INDISPONIVEL', 51, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (256, 'INDISPONIVEL', 51, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (257, 'INDISPONIVEL', 51, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (258, 'INDISPONIVEL', 51, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (259, 'INDISPONIVEL', 51, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (260, 'INDISPONIVEL', 51, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (261, 'INDISPONIVEL', 51, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (262, 'INDISPONIVEL', 51, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (263, 'INDISPONIVEL', 51, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (264, 'INDISPONIVEL', 51, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (265, 'INDISPONIVEL', 51, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (266, 'INDISPONIVEL', 51, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (267, 'INDISPONIVEL', 51, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (268, 'INDISPONIVEL', 51, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (269, 'INDISPONIVEL', 51, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (270, 'INDISPONIVEL', 51, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (271, 'INDISPONIVEL', 51, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (272, 'INDISPONIVEL', 51, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (273, 'INDISPONIVEL', 51, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (274, 'INDISPONIVEL', 51, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (275, 'INDISPONIVEL', 51, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (276, 'INDISPONIVEL', 51, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (277, 'INDISPONIVEL', 51, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (278, 'INDISPONIVEL', 51, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (279, 'INDISPONIVEL', 51, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (280, 'INDISPONIVEL', 51, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (281, 'INDISPONIVEL', 51, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (282, 'INDISPONIVEL', 51, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (283, 'INDISPONIVEL', 51, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (284, 'INDISPONIVEL', 51, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (285, 'INDISPONIVEL', 51, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (286, 'INDISPONIVEL', 51, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (287, 'INDISPONIVEL', 51, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (288, 'INDISPONIVEL', 51, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (289, 'INDISPONIVEL', 51, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (290, 'INDISPONIVEL', 51, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (291, 'INDISPONIVEL', 51, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (292, 'INDISPONIVEL', 51, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (293, 'INDISPONIVEL', 51, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (294, 'INDISPONIVEL', 51, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (295, 'INDISPONIVEL', 51, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (296, 'INDISPONIVEL', 51, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (297, 'INDISPONIVEL', 51, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (298, 'INDISPONIVEL', 51, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (299, 'INDISPONIVEL', 51, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (300, 'INDISPONIVEL', 51, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (301, 'INDISPONIVEL', 51, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (302, 'INDISPONIVEL', 51, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (303, 'INDISPONIVEL', 51, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (304, 'INDISPONIVEL', 51, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (305, 'INDISPONIVEL', 51, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (306, 'INDISPONIVEL', 51, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (307, 'INDISPONIVEL', 51, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (308, 'INDISPONIVEL', 51, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (309, 'INDISPONIVEL', 51, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (310, 'INDISPONIVEL', 51, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (311, 'INDISPONIVEL', 51, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (312, 'INDISPONIVEL', 51, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (313, 'INDISPONIVEL', 51, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (314, 'INDISPONIVEL', 51, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (315, 'INDISPONIVEL', 51, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (316, 'INDISPONIVEL', 51, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (317, 'INDISPONIVEL', 51, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (318, 'INDISPONIVEL', 51, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (319, 'INDISPONIVEL', 51, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (320, 'INDISPONIVEL', 51, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (321, 'INDISPONIVEL', 51, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (322, 'INDISPONIVEL', 51, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (323, 'INDISPONIVEL', 51, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (324, 'INDISPONIVEL', 51, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (325, 'INDISPONIVEL', 51, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (326, 'INDISPONIVEL', 51, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (327, 'INDISPONIVEL', 51, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (328, 'INDISPONIVEL', 51, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (329, 'INDISPONIVEL', 51, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (330, 'INDISPONIVEL', 51, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (331, 'INDISPONIVEL', 51, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (332, 'INDISPONIVEL', 51, 1, 87, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (333, 'INDISPONIVEL', 51, 1, 88, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (334, 'INDISPONIVEL', 59, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (335, 'INDISPONIVEL', 59, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (336, 'INDISPONIVEL', 59, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (337, 'INDISPONIVEL', 59, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (338, 'INDISPONIVEL', 59, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (339, 'INDISPONIVEL', 59, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (340, 'INDISPONIVEL', 59, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (341, 'INDISPONIVEL', 59, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (342, 'INDISPONIVEL', 59, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (343, 'INDISPONIVEL', 59, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (344, 'INDISPONIVEL', 66, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (345, 'INDISPONIVEL', 66, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (346, 'INDISPONIVEL', 66, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (347, 'INDISPONIVEL', 66, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (348, 'INDISPONIVEL', 66, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (349, 'INDISPONIVEL', 66, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (350, 'INDISPONIVEL', 66, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (351, 'INDISPONIVEL', 66, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (352, 'INDISPONIVEL', 66, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (353, 'INDISPONIVEL', 66, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (354, 'INDISPONIVEL', 66, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (355, 'INDISPONIVEL', 66, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (356, 'INDISPONIVEL', 66, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (357, 'INDISPONIVEL', 66, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (358, 'INDISPONIVEL', 66, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (359, 'INDISPONIVEL', 66, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (360, 'INDISPONIVEL', 66, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (361, 'INDISPONIVEL', 66, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (362, 'INDISPONIVEL', 66, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (363, 'INDISPONIVEL', 66, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (364, 'INDISPONIVEL', 66, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (365, 'INDISPONIVEL', 66, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (366, 'INDISPONIVEL', 66, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (367, 'INDISPONIVEL', 66, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (368, 'INDISPONIVEL', 66, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (369, 'INDISPONIVEL', 66, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (370, 'INDISPONIVEL', 66, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (371, 'INDISPONIVEL', 66, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (372, 'INDISPONIVEL', 66, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (373, 'INDISPONIVEL', 66, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (374, 'INDISPONIVEL', 66, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (375, 'INDISPONIVEL', 66, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (376, 'INDISPONIVEL', 66, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (377, 'INDISPONIVEL', 66, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (378, 'INDISPONIVEL', 66, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (379, 'INDISPONIVEL', 66, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (380, 'INDISPONIVEL', 66, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (381, 'INDISPONIVEL', 66, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (382, 'INDISPONIVEL', 66, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (383, 'INDISPONIVEL', 66, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (384, 'INDISPONIVEL', 66, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (385, 'INDISPONIVEL', 66, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (386, 'INDISPONIVEL', 66, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (387, 'INDISPONIVEL', 66, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (388, 'INDISPONIVEL', 66, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (389, 'INDISPONIVEL', 66, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (390, 'INDISPONIVEL', 66, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (391, 'INDISPONIVEL', 66, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (392, 'INDISPONIVEL', 66, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (393, 'INDISPONIVEL', 66, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (394, 'INDISPONIVEL', 66, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (395, 'INDISPONIVEL', 66, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (396, 'INDISPONIVEL', 66, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (397, 'INDISPONIVEL', 66, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (398, 'INDISPONIVEL', 66, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (399, 'INDISPONIVEL', 66, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (400, 'INDISPONIVEL', 66, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (401, 'INDISPONIVEL', 66, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (402, 'INDISPONIVEL', 66, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (403, 'INDISPONIVEL', 66, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (404, 'INDISPONIVEL', 66, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (405, 'INDISPONIVEL', 66, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (406, 'INDISPONIVEL', 66, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (407, 'INDISPONIVEL', 66, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (408, 'INDISPONIVEL', 66, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (409, 'INDISPONIVEL', 66, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (410, 'INDISPONIVEL', 66, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (411, 'INDISPONIVEL', 66, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (412, 'INDISPONIVEL', 66, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (413, 'INDISPONIVEL', 66, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (414, 'INDISPONIVEL', 66, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (415, 'INDISPONIVEL', 66, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (416, 'INDISPONIVEL', 66, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (417, 'INDISPONIVEL', 66, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (418, 'INDISPONIVEL', 66, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (419, 'INDISPONIVEL', 66, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (420, 'INDISPONIVEL', 66, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (421, 'INDISPONIVEL', 66, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (422, 'INDISPONIVEL', 66, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (423, 'INDISPONIVEL', 66, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (424, 'INDISPONIVEL', 66, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (425, 'INDISPONIVEL', 66, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (426, 'INDISPONIVEL', 66, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (427, 'INDISPONIVEL', 66, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (428, 'INDISPONIVEL', 66, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (429, 'INDISPONIVEL', 66, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (430, 'INDISPONIVEL', 66, 1, 87, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (431, 'INDISPONIVEL', 66, 1, 88, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (432, 'INDISPONIVEL', 66, 1, 89, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (433, 'INDISPONIVEL', 66, 1, 90, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (434, 'INDISPONIVEL', 66, 1, 91, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (435, 'INDISPONIVEL', 66, 1, 92, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (436, 'INDISPONIVEL', 66, 1, 93, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (437, 'INDISPONIVEL', 66, 1, 94, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (438, 'INDISPONIVEL', 66, 1, 95, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (439, 'INDISPONIVEL', 66, 1, 96, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (440, 'INDISPONIVEL', 66, 1, 97, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (441, 'INDISPONIVEL', 66, 1, 98, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (442, 'INDISPONIVEL', 66, 1, 99, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (443, 'INDISPONIVEL', 66, 1, 100, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (444, 'INDISPONIVEL', 66, 1, 101, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (445, 'INDISPONIVEL', 66, 1, 102, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (446, 'INDISPONIVEL', 66, 1, 103, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (447, 'INDISPONIVEL', 66, 1, 104, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (448, 'INDISPONIVEL', 66, 1, 105, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (449, 'INDISPONIVEL', 66, 1, 106, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (450, 'INDISPONIVEL', 66, 1, 107, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (451, 'INDISPONIVEL', 66, 1, 108, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (452, 'INDISPONIVEL', 66, 1, 109, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (453, 'INDISPONIVEL', 66, 1, 110, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (454, 'INDISPONIVEL', 66, 1, 111, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (455, 'INDISPONIVEL', 66, 1, 112, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (456, 'INDISPONIVEL', 66, 1, 113, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (457, 'INDISPONIVEL', 66, 1, 114, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (458, 'INDISPONIVEL', 66, 1, 115, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (459, 'INDISPONIVEL', 66, 1, 116, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (460, 'INDISPONIVEL', 66, 1, 117, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (461, 'INDISPONIVEL', 66, 1, 118, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (462, 'INDISPONIVEL', 66, 1, 119, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (463, 'INDISPONIVEL', 66, 1, 120, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (464, 'INDISPONIVEL', 66, 1, 121, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (465, 'INDISPONIVEL', 66, 1, 122, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (466, 'INDISPONIVEL', 66, 1, 123, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (467, 'INDISPONIVEL', 66, 1, 124, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (468, 'INDISPONIVEL', 66, 1, 125, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (469, 'INDISPONIVEL', 66, 1, 126, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (470, 'INDISPONIVEL', 66, 1, 127, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (471, 'INDISPONIVEL', 66, 1, 128, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (472, 'INDISPONIVEL', 66, 1, 129, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (473, 'INDISPONIVEL', 66, 1, 130, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (474, 'INDISPONIVEL', 66, 1, 131, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (475, 'INDISPONIVEL', 66, 1, 132, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (476, 'INDISPONIVEL', 66, 1, 133, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (477, 'INDISPONIVEL', 66, 1, 134, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (478, 'INDISPONIVEL', 66, 1, 135, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (479, 'INDISPONIVEL', 66, 1, 136, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (480, 'INDISPONIVEL', 66, 1, 137, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (481, 'INDISPONIVEL', 66, 1, 138, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (482, 'INDISPONIVEL', 66, 1, 139, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (483, 'INDISPONIVEL', 66, 1, 140, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (484, 'INDISPONIVEL', 66, 1, 141, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (485, 'INDISPONIVEL', 66, 1, 142, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (486, 'INDISPONIVEL', 66, 1, 143, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (487, 'INDISPONIVEL', 66, 1, 144, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (488, 'INDISPONIVEL', 66, 1, 145, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (489, 'INDISPONIVEL', 66, 1, 146, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (490, 'INDISPONIVEL', 66, 1, 147, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (491, 'INDISPONIVEL', 66, 1, 148, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (492, 'INDISPONIVEL', 66, 1, 149, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (493, 'INDISPONIVEL', 66, 1, 150, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (494, 'INDISPONIVEL', 66, 1, 151, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (495, 'INDISPONIVEL', 66, 1, 152, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (496, 'INDISPONIVEL', 66, 1, 153, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (497, 'INDISPONIVEL', 66, 1, 154, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (498, 'INDISPONIVEL', 66, 1, 155, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (499, 'INDISPONIVEL', 66, 1, 156, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (500, 'INDISPONIVEL', 66, 1, 157, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (501, 'INDISPONIVEL', 66, 1, 158, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (502, 'INDISPONIVEL', 66, 1, 159, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (503, 'INDISPONIVEL', 66, 1, 160, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (504, 'INDISPONIVEL', 66, 1, 161, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (505, 'INDISPONIVEL', 66, 1, 162, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (506, 'INDISPONIVEL', 66, 1, 163, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (507, 'INDISPONIVEL', 66, 1, 164, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (508, 'INDISPONIVEL', 66, 1, 165, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (509, 'INDISPONIVEL', 66, 1, 166, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (510, 'INDISPONIVEL', 66, 1, 167, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (511, 'INDISPONIVEL', 66, 1, 168, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (512, 'INDISPONIVEL', 66, 1, 169, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (513, 'INDISPONIVEL', 66, 1, 170, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (514, 'INDISPONIVEL', 66, 1, 171, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (515, 'INDISPONIVEL', 66, 1, 172, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (516, 'INDISPONIVEL', 66, 1, 173, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (517, 'INDISPONIVEL', 66, 1, 174, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (518, 'INDISPONIVEL', 66, 1, 175, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (519, 'INDISPONIVEL', 66, 1, 176, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (520, 'INDISPONIVEL', 66, 1, 177, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (521, 'INDISPONIVEL', 67, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (522, 'INDISPONIVEL', 67, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (523, 'INDISPONIVEL', 67, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (524, 'INDISPONIVEL', 67, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (525, 'INDISPONIVEL', 67, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (526, 'INDISPONIVEL', 67, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (527, 'INDISPONIVEL', 67, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (528, 'INDISPONIVEL', 67, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (529, 'INDISPONIVEL', 67, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (530, 'INDISPONIVEL', 67, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (531, 'INDISPONIVEL', 67, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (532, 'INDISPONIVEL', 67, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (533, 'INDISPONIVEL', 67, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (534, 'INDISPONIVEL', 67, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (535, 'INDISPONIVEL', 67, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (536, 'INDISPONIVEL', 67, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (537, 'INDISPONIVEL', 67, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (538, 'INDISPONIVEL', 67, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (539, 'INDISPONIVEL', 67, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (540, 'INDISPONIVEL', 67, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (541, 'INDISPONIVEL', 67, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (542, 'INDISPONIVEL', 67, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (543, 'INDISPONIVEL', 67, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (544, 'INDISPONIVEL', 67, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (545, 'INDISPONIVEL', 67, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (546, 'INDISPONIVEL', 67, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (547, 'INDISPONIVEL', 67, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (548, 'INDISPONIVEL', 67, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (549, 'INDISPONIVEL', 67, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (550, 'INDISPONIVEL', 67, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (551, 'INDISPONIVEL', 67, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (552, 'INDISPONIVEL', 67, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (553, 'INDISPONIVEL', 67, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (554, 'INDISPONIVEL', 67, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (555, 'INDISPONIVEL', 67, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (556, 'INDISPONIVEL', 67, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (557, 'INDISPONIVEL', 67, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (558, 'INDISPONIVEL', 67, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (559, 'INDISPONIVEL', 67, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (560, 'INDISPONIVEL', 67, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (561, 'INDISPONIVEL', 67, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (562, 'INDISPONIVEL', 67, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (563, 'INDISPONIVEL', 67, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (564, 'INDISPONIVEL', 67, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (565, 'INDISPONIVEL', 67, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (566, 'INDISPONIVEL', 67, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (567, 'INDISPONIVEL', 67, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (568, 'INDISPONIVEL', 67, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (569, 'INDISPONIVEL', 67, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (570, 'INDISPONIVEL', 67, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (571, 'INDISPONIVEL', 67, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (572, 'INDISPONIVEL', 67, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (573, 'INDISPONIVEL', 67, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (574, 'INDISPONIVEL', 67, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (575, 'INDISPONIVEL', 67, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (576, 'INDISPONIVEL', 67, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (577, 'INDISPONIVEL', 67, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (578, 'INDISPONIVEL', 67, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (579, 'INDISPONIVEL', 67, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (580, 'INDISPONIVEL', 67, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (581, 'INDISPONIVEL', 67, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (582, 'INDISPONIVEL', 67, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (583, 'INDISPONIVEL', 67, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (584, 'INDISPONIVEL', 67, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (585, 'INDISPONIVEL', 67, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (586, 'INDISPONIVEL', 67, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (587, 'INDISPONIVEL', 67, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (588, 'INDISPONIVEL', 67, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (589, 'INDISPONIVEL', 67, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (590, 'INDISPONIVEL', 67, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (591, 'INDISPONIVEL', 67, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (592, 'INDISPONIVEL', 67, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (593, 'INDISPONIVEL', 67, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (594, 'INDISPONIVEL', 67, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (595, 'INDISPONIVEL', 67, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (596, 'INDISPONIVEL', 67, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (597, 'INDISPONIVEL', 67, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (598, 'INDISPONIVEL', 67, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (599, 'INDISPONIVEL', 67, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (600, 'INDISPONIVEL', 67, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (601, 'INDISPONIVEL', 67, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (602, 'INDISPONIVEL', 67, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (603, 'INDISPONIVEL', 67, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (604, 'INDISPONIVEL', 67, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (605, 'INDISPONIVEL', 67, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (606, 'INDISPONIVEL', 67, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (607, 'INDISPONIVEL', 67, 1, 87, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (608, 'INDISPONIVEL', 67, 1, 88, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (609, 'INDISPONIVEL', 67, 1, 89, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (610, 'INDISPONIVEL', 67, 1, 90, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (611, 'INDISPONIVEL', 67, 1, 91, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (612, 'INDISPONIVEL', 67, 1, 92, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (613, 'INDISPONIVEL', 67, 1, 93, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (614, 'INDISPONIVEL', 67, 1, 94, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (615, 'INDISPONIVEL', 67, 1, 95, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (616, 'INDISPONIVEL', 67, 1, 96, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (617, 'INDISPONIVEL', 67, 1, 97, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (618, 'INDISPONIVEL', 67, 1, 98, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (619, 'INDISPONIVEL', 67, 1, 99, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (620, 'INDISPONIVEL', 67, 1, 100, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (621, 'INDISPONIVEL', 67, 1, 101, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (622, 'INDISPONIVEL', 67, 1, 102, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (623, 'INDISPONIVEL', 67, 1, 103, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (624, 'INDISPONIVEL', 67, 1, 104, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (625, 'INDISPONIVEL', 67, 1, 105, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (626, 'INDISPONIVEL', 67, 1, 106, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (627, 'INDISPONIVEL', 67, 1, 107, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (628, 'INDISPONIVEL', 67, 1, 108, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (629, 'INDISPONIVEL', 67, 1, 109, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (630, 'INDISPONIVEL', 67, 1, 110, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (631, 'INDISPONIVEL', 67, 1, 111, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (632, 'INDISPONIVEL', 67, 1, 112, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (633, 'INDISPONIVEL', 67, 1, 113, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (634, 'INDISPONIVEL', 67, 1, 114, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (635, 'INDISPONIVEL', 67, 1, 115, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (636, 'INDISPONIVEL', 67, 1, 116, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (637, 'INDISPONIVEL', 67, 1, 117, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (638, 'INDISPONIVEL', 67, 1, 118, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (639, 'INDISPONIVEL', 67, 1, 119, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (640, 'INDISPONIVEL', 67, 1, 120, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (641, 'INDISPONIVEL', 67, 1, 121, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (642, 'INDISPONIVEL', 67, 1, 122, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (643, 'INDISPONIVEL', 67, 1, 123, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (644, 'INDISPONIVEL', 67, 1, 124, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (645, 'INDISPONIVEL', 67, 1, 125, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (646, 'INDISPONIVEL', 67, 1, 126, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (647, 'INDISPONIVEL', 67, 1, 127, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (648, 'INDISPONIVEL', 67, 1, 128, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (649, 'INDISPONIVEL', 67, 1, 129, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (650, 'INDISPONIVEL', 67, 1, 130, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (651, 'INDISPONIVEL', 67, 1, 131, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (652, 'INDISPONIVEL', 67, 1, 132, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (653, 'INDISPONIVEL', 67, 1, 133, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (654, 'INDISPONIVEL', 67, 1, 134, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (655, 'INDISPONIVEL', 67, 1, 135, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (656, 'INDISPONIVEL', 67, 1, 136, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (657, 'INDISPONIVEL', 67, 1, 137, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (658, 'INDISPONIVEL', 67, 1, 138, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (659, 'INDISPONIVEL', 67, 1, 139, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (660, 'INDISPONIVEL', 67, 1, 140, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (832, 'INDISPONIVEL', 72, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (833, 'INDISPONIVEL', 72, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (834, 'INDISPONIVEL', 72, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (835, 'INDISPONIVEL', 72, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (836, 'INDISPONIVEL', 72, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (661, 'INDISPONIVEL', 67, 1, 141, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (662, 'INDISPONIVEL', 67, 1, 142, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (663, 'INDISPONIVEL', 67, 1, 143, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (664, 'INDISPONIVEL', 67, 1, 144, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (665, 'INDISPONIVEL', 67, 1, 145, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (666, 'INDISPONIVEL', 67, 1, 146, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (667, 'INDISPONIVEL', 67, 1, 147, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (668, 'INDISPONIVEL', 67, 1, 148, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (669, 'INDISPONIVEL', 67, 1, 149, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (670, 'INDISPONIVEL', 67, 1, 150, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (671, 'INDISPONIVEL', 67, 1, 151, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (672, 'INDISPONIVEL', 67, 1, 152, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (673, 'INDISPONIVEL', 67, 1, 153, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (674, 'INDISPONIVEL', 67, 1, 154, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (675, 'INDISPONIVEL', 67, 1, 155, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (676, 'INDISPONIVEL', 67, 1, 156, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (677, 'INDISPONIVEL', 67, 1, 157, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (678, 'INDISPONIVEL', 67, 1, 158, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (679, 'INDISPONIVEL', 67, 1, 159, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (680, 'INDISPONIVEL', 67, 1, 160, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (681, 'INDISPONIVEL', 67, 1, 161, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (682, 'INDISPONIVEL', 67, 1, 162, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (683, 'INDISPONIVEL', 67, 1, 163, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (684, 'INDISPONIVEL', 67, 1, 164, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (685, 'INDISPONIVEL', 67, 1, 165, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (686, 'INDISPONIVEL', 67, 1, 166, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (687, 'INDISPONIVEL', 67, 1, 167, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (688, 'INDISPONIVEL', 67, 1, 168, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (689, 'INDISPONIVEL', 67, 1, 169, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (690, 'INDISPONIVEL', 67, 1, 170, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (691, 'INDISPONIVEL', 67, 1, 171, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (692, 'INDISPONIVEL', 67, 1, 172, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (693, 'INDISPONIVEL', 67, 1, 173, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (694, 'INDISPONIVEL', 67, 1, 174, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (695, 'INDISPONIVEL', 67, 1, 175, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (696, 'INDISPONIVEL', 67, 1, 176, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (697, 'INDISPONIVEL', 67, 1, 177, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (698, 'INDISPONIVEL', 71, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (699, 'INDISPONIVEL', 71, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (700, 'INDISPONIVEL', 71, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (701, 'INDISPONIVEL', 71, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (702, 'INDISPONIVEL', 71, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (703, 'INDISPONIVEL', 71, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (704, 'INDISPONIVEL', 71, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (705, 'INDISPONIVEL', 71, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (706, 'INDISPONIVEL', 71, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (707, 'INDISPONIVEL', 71, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (708, 'INDISPONIVEL', 71, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (709, 'INDISPONIVEL', 71, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (710, 'INDISPONIVEL', 71, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (711, 'INDISPONIVEL', 71, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (712, 'INDISPONIVEL', 71, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (713, 'INDISPONIVEL', 71, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (714, 'INDISPONIVEL', 71, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (715, 'INDISPONIVEL', 71, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (716, 'INDISPONIVEL', 71, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (717, 'INDISPONIVEL', 71, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (718, 'INDISPONIVEL', 71, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (719, 'INDISPONIVEL', 71, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (720, 'INDISPONIVEL', 71, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (721, 'INDISPONIVEL', 71, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (722, 'INDISPONIVEL', 71, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (723, 'INDISPONIVEL', 71, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (724, 'INDISPONIVEL', 71, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (725, 'INDISPONIVEL', 71, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (726, 'INDISPONIVEL', 71, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (727, 'INDISPONIVEL', 71, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (728, 'INDISPONIVEL', 71, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (729, 'INDISPONIVEL', 71, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (730, 'INDISPONIVEL', 71, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (731, 'INDISPONIVEL', 71, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (732, 'INDISPONIVEL', 71, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (733, 'INDISPONIVEL', 71, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (734, 'INDISPONIVEL', 71, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (735, 'INDISPONIVEL', 71, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (736, 'INDISPONIVEL', 71, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (737, 'INDISPONIVEL', 71, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (738, 'INDISPONIVEL', 71, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (739, 'INDISPONIVEL', 71, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (740, 'INDISPONIVEL', 71, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (741, 'INDISPONIVEL', 71, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (742, 'INDISPONIVEL', 71, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (743, 'INDISPONIVEL', 71, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (744, 'INDISPONIVEL', 71, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (745, 'INDISPONIVEL', 71, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (746, 'INDISPONIVEL', 71, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (747, 'INDISPONIVEL', 71, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (748, 'INDISPONIVEL', 71, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (749, 'INDISPONIVEL', 71, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (750, 'INDISPONIVEL', 71, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (751, 'INDISPONIVEL', 71, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (752, 'INDISPONIVEL', 71, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (753, 'INDISPONIVEL', 71, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (754, 'INDISPONIVEL', 71, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (755, 'INDISPONIVEL', 71, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (756, 'INDISPONIVEL', 71, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (757, 'INDISPONIVEL', 71, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (758, 'INDISPONIVEL', 71, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (759, 'INDISPONIVEL', 71, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (760, 'INDISPONIVEL', 71, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (761, 'INDISPONIVEL', 71, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (762, 'INDISPONIVEL', 71, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (763, 'INDISPONIVEL', 71, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (764, 'INDISPONIVEL', 71, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (765, 'INDISPONIVEL', 71, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (766, 'INDISPONIVEL', 71, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (767, 'INDISPONIVEL', 71, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (768, 'INDISPONIVEL', 71, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (769, 'INDISPONIVEL', 71, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (770, 'INDISPONIVEL', 71, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (771, 'INDISPONIVEL', 71, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (772, 'INDISPONIVEL', 71, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (773, 'INDISPONIVEL', 71, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (774, 'INDISPONIVEL', 71, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (775, 'INDISPONIVEL', 71, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (776, 'INDISPONIVEL', 71, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (777, 'INDISPONIVEL', 71, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (778, 'INDISPONIVEL', 71, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (779, 'INDISPONIVEL', 71, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (780, 'INDISPONIVEL', 71, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (781, 'INDISPONIVEL', 71, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (782, 'INDISPONIVEL', 71, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (783, 'INDISPONIVEL', 71, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (784, 'INDISPONIVEL', 71, 1, 87, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (785, 'INDISPONIVEL', 71, 1, 88, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1103, 'INDISPONIVEL', 78, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1104, 'INDISPONIVEL', 78, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1105, 'INDISPONIVEL', 78, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1106, 'INDISPONIVEL', 78, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1107, 'INDISPONIVEL', 78, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (972, 'INDISPONIVEL', 74, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (973, 'INDISPONIVEL', 74, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (974, 'INDISPONIVEL', 74, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (975, 'INDISPONIVEL', 74, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (50, 'INDISPONIVEL', 33, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (51, 'INDISPONIVEL', 33, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (52, 'INDISPONIVEL', 33, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (53, 'INDISPONIVEL', 33, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (54, 'INDISPONIVEL', 33, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (55, 'INDISPONIVEL', 33, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (56, 'INDISPONIVEL', 33, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (57, 'INDISPONIVEL', 33, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (58, 'INDISPONIVEL', 33, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (59, 'INDISPONIVEL', 33, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (60, 'INDISPONIVEL', 41, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (61, 'INDISPONIVEL', 41, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (62, 'INDISPONIVEL', 41, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (63, 'INDISPONIVEL', 41, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (64, 'INDISPONIVEL', 41, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (65, 'INDISPONIVEL', 41, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (66, 'INDISPONIVEL', 41, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (976, 'INDISPONIVEL', 74, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (786, 'INDISPONIVEL', 71, 1, 89, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (797, 'INDISPONIVEL', 72, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (798, 'INDISPONIVEL', 72, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (799, 'INDISPONIVEL', 72, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (800, 'INDISPONIVEL', 72, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (801, 'INDISPONIVEL', 72, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (802, 'INDISPONIVEL', 72, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (803, 'INDISPONIVEL', 72, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (804, 'INDISPONIVEL', 72, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (805, 'INDISPONIVEL', 72, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (806, 'INDISPONIVEL', 72, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (807, 'INDISPONIVEL', 72, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (808, 'INDISPONIVEL', 72, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (809, 'INDISPONIVEL', 72, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (810, 'INDISPONIVEL', 72, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (811, 'INDISPONIVEL', 72, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (812, 'INDISPONIVEL', 72, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (813, 'INDISPONIVEL', 72, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (814, 'INDISPONIVEL', 72, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (815, 'INDISPONIVEL', 72, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (816, 'INDISPONIVEL', 72, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (817, 'INDISPONIVEL', 72, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (818, 'INDISPONIVEL', 72, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (819, 'INDISPONIVEL', 72, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (820, 'INDISPONIVEL', 72, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (821, 'INDISPONIVEL', 72, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (822, 'INDISPONIVEL', 72, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (823, 'INDISPONIVEL', 72, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (824, 'INDISPONIVEL', 72, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (825, 'INDISPONIVEL', 72, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (826, 'INDISPONIVEL', 72, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (827, 'INDISPONIVEL', 72, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (828, 'INDISPONIVEL', 72, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (829, 'INDISPONIVEL', 72, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (830, 'INDISPONIVEL', 72, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (831, 'INDISPONIVEL', 72, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (837, 'INDISPONIVEL', 72, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (838, 'INDISPONIVEL', 72, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (839, 'INDISPONIVEL', 72, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (840, 'INDISPONIVEL', 72, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (841, 'INDISPONIVEL', 72, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (842, 'INDISPONIVEL', 72, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (843, 'INDISPONIVEL', 72, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (844, 'INDISPONIVEL', 72, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (845, 'INDISPONIVEL', 72, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (846, 'INDISPONIVEL', 72, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (847, 'INDISPONIVEL', 72, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (848, 'INDISPONIVEL', 72, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (849, 'INDISPONIVEL', 72, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (850, 'INDISPONIVEL', 72, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (851, 'INDISPONIVEL', 72, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (852, 'INDISPONIVEL', 72, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (853, 'INDISPONIVEL', 72, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (854, 'INDISPONIVEL', 72, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (855, 'INDISPONIVEL', 72, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (856, 'INDISPONIVEL', 72, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (857, 'INDISPONIVEL', 72, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (858, 'INDISPONIVEL', 72, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (859, 'INDISPONIVEL', 72, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (860, 'INDISPONIVEL', 72, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (861, 'INDISPONIVEL', 72, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (862, 'INDISPONIVEL', 72, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (863, 'INDISPONIVEL', 72, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (864, 'INDISPONIVEL', 72, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (865, 'INDISPONIVEL', 72, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (866, 'INDISPONIVEL', 72, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (867, 'INDISPONIVEL', 72, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (868, 'INDISPONIVEL', 72, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (869, 'INDISPONIVEL', 72, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (870, 'INDISPONIVEL', 72, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (871, 'INDISPONIVEL', 72, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (872, 'INDISPONIVEL', 72, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (873, 'INDISPONIVEL', 72, 1, 87, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (874, 'INDISPONIVEL', 72, 1, 88, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (875, 'INDISPONIVEL', 72, 1, 89, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (876, 'INDISPONIVEL', 73, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (877, 'INDISPONIVEL', 73, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (878, 'INDISPONIVEL', 73, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1108, 'INDISPONIVEL', 78, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1109, 'INDISPONIVEL', 78, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (879, 'INDISPONIVEL', 73, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1110, 'INDISPONIVEL', 78, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1111, 'INDISPONIVEL', 78, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (880, 'INDISPONIVEL', 73, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (881, 'INDISPONIVEL', 73, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1112, 'INDISPONIVEL', 78, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1113, 'INDISPONIVEL', 78, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1114, 'INDISPONIVEL', 78, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1115, 'INDISPONIVEL', 78, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1116, 'INDISPONIVEL', 78, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (787, 'DISPONIVEL', 72, 1, 1, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (788, 'DISPONIVEL', 72, 1, 2, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (789, 'DISPONIVEL', 72, 1, 3, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (790, 'DISPONIVEL', 72, 1, 4, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (791, 'DISPONIVEL', 72, 1, 5, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (792, 'DISPONIVEL', 72, 1, 6, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (793, 'DISPONIVEL', 72, 1, 7, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (794, 'DISPONIVEL', 72, 1, 8, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (795, 'DISPONIVEL', 72, 1, 9, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (796, 'DISPONIVEL', 72, 1, 10, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1117, 'INDISPONIVEL', 79, 1, 1, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1118, 'INDISPONIVEL', 79, 1, 2, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1119, 'INDISPONIVEL', 79, 1, 3, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1120, 'INDISPONIVEL', 79, 1, 4, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1121, 'INDISPONIVEL', 79, 1, 5, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1122, 'INDISPONIVEL', 79, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1123, 'INDISPONIVEL', 79, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1124, 'INDISPONIVEL', 79, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1125, 'INDISPONIVEL', 79, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1126, 'INDISPONIVEL', 79, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1127, 'INDISPONIVEL', 79, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1128, 'INDISPONIVEL', 79, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1129, 'INDISPONIVEL', 79, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (33, 'DISPONIVEL', 13, 1, 1, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (34, 'DISPONIVEL', 13, 1, 2, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (35, 'DISPONIVEL', 13, 1, 3, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (36, 'DISPONIVEL', 13, 1, 4, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (37, 'DISPONIVEL', 13, 1, 5, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (38, 'DISPONIVEL', 13, 1, 6, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (39, 'DISPONIVEL', 13, 1, 7, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (40, 'DISPONIVEL', 14, 1, 1, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (41, 'DISPONIVEL', 14, 1, 2, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (42, 'DISPONIVEL', 14, 1, 3, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (43, 'DISPONIVEL', 14, 1, 4, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (44, 'DISPONIVEL', 14, 1, 5, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (45, 'DISPONIVEL', 14, 1, 6, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (46, 'DISPONIVEL', 14, 1, 7, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (47, 'DISPONIVEL', 14, 1, 8, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (48, 'DISPONIVEL', 14, 1, 9, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (49, 'DISPONIVEL', 14, 1, 10, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (23, 'DISPONIVEL', 11, 1, 2, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (24, 'DISPONIVEL', 11, 1, 3, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (29, 'DISPONIVEL', 12, 1, 1, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (30, 'DISPONIVEL', 12, 1, 2, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (31, 'DISPONIVEL', 12, 1, 3, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (32, 'DISPONIVEL', 12, 1, 4, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (22, 'DISPONIVEL', 11, 1, 1, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (25, 'DISPONIVEL', 11, 1, 4, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (28, 'DISPONIVEL', 11, 1, 7, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (27, 'DISPONIVEL', 11, 1, 6, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (26, 'DISPONIVEL', 11, 1, 5, 34.90, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (965, 'DISPONIVEL', 74, 1, 4, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (966, 'DISPONIVEL', 74, 1, 5, 33.00, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (970, 'VENDIDO', 74, 3, 9, 33.00, '[B@779c0170');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (969, 'VENDIDO', 74, 3, 8, 33.00, '[B@532bde28');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (968, 'VENDIDO', 74, 3, 7, 33.00, '[B@119e9d1');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (967, 'VENDIDO', 74, 3, 6, 33.00, '[B@f90c024');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1012, 'INDISPONIVEL', 75, 1, 6, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1013, 'INDISPONIVEL', 75, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1014, 'INDISPONIVEL', 75, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1015, 'INDISPONIVEL', 75, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1016, 'INDISPONIVEL', 75, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1017, 'INDISPONIVEL', 75, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1018, 'INDISPONIVEL', 75, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1019, 'INDISPONIVEL', 75, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1020, 'INDISPONIVEL', 75, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1021, 'INDISPONIVEL', 75, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1022, 'INDISPONIVEL', 75, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1023, 'INDISPONIVEL', 75, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1024, 'INDISPONIVEL', 75, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1025, 'INDISPONIVEL', 75, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1026, 'INDISPONIVEL', 75, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1027, 'INDISPONIVEL', 75, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1028, 'INDISPONIVEL', 75, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1029, 'INDISPONIVEL', 75, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (962, 'VENDIDO', 74, 3, 1, 33.00, '[B@6b4b2015');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (963, 'VENDIDO', 74, 3, 2, 33.00, '[B@6c36081e');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (964, 'VENDIDO', 74, 3, 3, 33.00, '[B@4e4bcca8');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (971, 'VENDIDO', 74, 3, 10, 33.00, '[B@41e67e0e');
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (882, 'INDISPONIVEL', 73, 1, 7, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (883, 'INDISPONIVEL', 73, 1, 8, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (884, 'INDISPONIVEL', 73, 1, 9, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (885, 'INDISPONIVEL', 73, 1, 10, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (886, 'INDISPONIVEL', 73, 1, 11, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (887, 'INDISPONIVEL', 73, 1, 12, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (888, 'INDISPONIVEL', 73, 1, 13, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (889, 'INDISPONIVEL', 73, 1, 14, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (890, 'INDISPONIVEL', 73, 1, 15, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (891, 'INDISPONIVEL', 73, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (892, 'INDISPONIVEL', 73, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (893, 'INDISPONIVEL', 73, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (894, 'INDISPONIVEL', 73, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (895, 'INDISPONIVEL', 73, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (896, 'INDISPONIVEL', 73, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (897, 'INDISPONIVEL', 73, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (898, 'INDISPONIVEL', 73, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (899, 'INDISPONIVEL', 73, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (900, 'INDISPONIVEL', 73, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (901, 'INDISPONIVEL', 73, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (902, 'INDISPONIVEL', 73, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (903, 'INDISPONIVEL', 73, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (904, 'INDISPONIVEL', 73, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (905, 'INDISPONIVEL', 73, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (906, 'INDISPONIVEL', 73, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (907, 'INDISPONIVEL', 73, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (908, 'INDISPONIVEL', 73, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (909, 'INDISPONIVEL', 73, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (910, 'INDISPONIVEL', 73, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (911, 'INDISPONIVEL', 73, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (912, 'INDISPONIVEL', 73, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (913, 'INDISPONIVEL', 73, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (914, 'INDISPONIVEL', 73, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (915, 'INDISPONIVEL', 73, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (916, 'INDISPONIVEL', 73, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (917, 'INDISPONIVEL', 73, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (918, 'INDISPONIVEL', 73, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (919, 'INDISPONIVEL', 73, 1, 44, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (920, 'INDISPONIVEL', 73, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (921, 'INDISPONIVEL', 73, 1, 46, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (922, 'INDISPONIVEL', 73, 1, 47, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (923, 'INDISPONIVEL', 73, 1, 48, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (924, 'INDISPONIVEL', 73, 1, 49, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (925, 'INDISPONIVEL', 73, 1, 50, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (926, 'INDISPONIVEL', 73, 1, 51, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (927, 'INDISPONIVEL', 73, 1, 52, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (928, 'INDISPONIVEL', 73, 1, 53, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (929, 'INDISPONIVEL', 73, 1, 54, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (930, 'INDISPONIVEL', 73, 1, 55, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (931, 'INDISPONIVEL', 73, 1, 56, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (932, 'INDISPONIVEL', 73, 1, 57, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (933, 'INDISPONIVEL', 73, 1, 58, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (934, 'INDISPONIVEL', 73, 1, 59, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (935, 'INDISPONIVEL', 73, 1, 60, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (936, 'INDISPONIVEL', 73, 1, 61, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (937, 'INDISPONIVEL', 73, 1, 62, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (938, 'INDISPONIVEL', 73, 1, 63, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (939, 'INDISPONIVEL', 73, 1, 64, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (940, 'INDISPONIVEL', 73, 1, 65, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (941, 'INDISPONIVEL', 73, 1, 66, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (942, 'INDISPONIVEL', 73, 1, 67, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (943, 'INDISPONIVEL', 73, 1, 68, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (944, 'INDISPONIVEL', 73, 1, 69, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (945, 'INDISPONIVEL', 73, 1, 70, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (946, 'INDISPONIVEL', 73, 1, 71, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (947, 'INDISPONIVEL', 73, 1, 72, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (948, 'INDISPONIVEL', 73, 1, 73, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (949, 'INDISPONIVEL', 73, 1, 74, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (950, 'INDISPONIVEL', 73, 1, 75, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (951, 'INDISPONIVEL', 73, 1, 76, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (952, 'INDISPONIVEL', 73, 1, 77, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (953, 'INDISPONIVEL', 73, 1, 78, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (954, 'INDISPONIVEL', 73, 1, 79, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (955, 'INDISPONIVEL', 73, 1, 80, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (956, 'INDISPONIVEL', 73, 1, 81, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (957, 'INDISPONIVEL', 73, 1, 82, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (958, 'INDISPONIVEL', 73, 1, 83, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (959, 'INDISPONIVEL', 73, 1, 84, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (960, 'INDISPONIVEL', 73, 1, 85, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (961, 'INDISPONIVEL', 73, 1, 86, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (977, 'INDISPONIVEL', 74, 1, 16, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (978, 'INDISPONIVEL', 74, 1, 17, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (979, 'INDISPONIVEL', 74, 1, 18, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (980, 'INDISPONIVEL', 74, 1, 19, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (981, 'INDISPONIVEL', 74, 1, 20, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (982, 'INDISPONIVEL', 74, 1, 21, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (983, 'INDISPONIVEL', 74, 1, 22, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (984, 'INDISPONIVEL', 74, 1, 23, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (985, 'INDISPONIVEL', 74, 1, 24, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (986, 'INDISPONIVEL', 74, 1, 25, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (987, 'INDISPONIVEL', 74, 1, 26, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (988, 'INDISPONIVEL', 74, 1, 27, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (989, 'INDISPONIVEL', 74, 1, 28, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (990, 'INDISPONIVEL', 74, 1, 29, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (991, 'INDISPONIVEL', 74, 1, 30, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (992, 'INDISPONIVEL', 74, 1, 31, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (993, 'INDISPONIVEL', 74, 1, 32, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (994, 'INDISPONIVEL', 74, 1, 33, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (995, 'INDISPONIVEL', 74, 1, 34, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (996, 'INDISPONIVEL', 74, 1, 35, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (997, 'INDISPONIVEL', 74, 1, 36, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (998, 'INDISPONIVEL', 74, 1, 37, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (999, 'INDISPONIVEL', 74, 1, 38, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1000, 'INDISPONIVEL', 74, 1, 39, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1001, 'INDISPONIVEL', 74, 1, 40, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1002, 'INDISPONIVEL', 74, 1, 41, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1003, 'INDISPONIVEL', 74, 1, 42, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1004, 'INDISPONIVEL', 74, 1, 43, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1006, 'INDISPONIVEL', 74, 1, 45, NULL, NULL);
+INSERT INTO "public"."lugar" ("id", "status", "id_evento", "versao", "numero", "preco", "token") VALUES (1005, 'RESERVADO', 74, 2, 44, NULL, NULL);
+
+
+--
+-- TOC entry 3183 (class 0 OID 24888)
+-- Dependencies: 210
+-- Data for Name: pedido; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO "public"."pedido" ("id", "id_comprador", "id_evento", "token") VALUES (1, 1, 11, 'tokenmarcos');
+INSERT INTO "public"."pedido" ("id", "id_comprador", "id_evento", "token") VALUES (2, 2, 11, 'tokenisra');
+INSERT INTO "public"."pedido" ("id", "id_comprador", "id_evento", "token") VALUES (3, 1, 11, 'tokenmarcos2');
+INSERT INTO "public"."pedido" ("id", "id_comprador", "id_evento", "token") VALUES (4, 1, 12, 'tokenmarcos');
+
+
+--
+-- TOC entry 3179 (class 0 OID 24854)
+-- Dependencies: 206
+-- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO "public"."usuario" ("id", "nome", "cpf", "email", "senha") VALUES (1, 'marcos', '1027', 'marcos@gmail.com', 'root');
+INSERT INTO "public"."usuario" ("id", "nome", "cpf", "email", "senha") VALUES (2, 'israel', '027.138.340-23', 'israel@gmail.com', 'root');
+
+
+--
+-- TOC entry 3195 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: evento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('"public"."evento_id_seq"', 79, true);
+
+
+--
+-- TOC entry 3196 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: lugar_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('"public"."lugar_id_seq"', 1129, true);
+
+
+--
+-- TOC entry 3197 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: pedido_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('"public"."pedido_id_seq"', 4, true);
+
+
+--
+-- TOC entry 3198 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('"public"."usuario_id_seq"', 2, true);
+
+
+--
+-- TOC entry 3039 (class 2606 OID 24838)
+-- Name: evento evento_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."evento"
+    ADD CONSTRAINT "evento_pkey" PRIMARY KEY ("id");
+
+
+--
+-- TOC entry 3047 (class 2606 OID 24947)
+-- Name: grouptable grouptablepk; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."grouptable"
+    ADD CONSTRAINT "grouptablepk" PRIMARY KEY ("id", "groupid");
+
+
+--
+-- TOC entry 3043 (class 2606 OID 24873)
+-- Name: lugar lugar_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."lugar"
+    ADD CONSTRAINT "lugar_pkey" PRIMARY KEY ("id");
+
+
+--
+-- TOC entry 3045 (class 2606 OID 24896)
+-- Name: pedido pedido_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."pedido"
+    ADD CONSTRAINT "pedido_pkey" PRIMARY KEY ("id");
+
+
+--
+-- TOC entry 3041 (class 2606 OID 24862)
+-- Name: usuario usuario_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."usuario"
+    ADD CONSTRAINT "usuario_pkey" PRIMARY KEY ("id");
+
+
+--
+-- TOC entry 3048 (class 2606 OID 24874)
+-- Name: lugar eventofk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."lugar"
+    ADD CONSTRAINT "eventofk" FOREIGN KEY ("id_evento") REFERENCES "public"."evento"("id");
+
+
+--
+-- TOC entry 3049 (class 2606 OID 24948)
+-- Name: grouptable userfk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "public"."grouptable"
+    ADD CONSTRAINT "userfk" FOREIGN KEY ("id") REFERENCES "public"."usuario"("id");
+
+
+-- Completed on 2019-12-19 20:17:37 -03
+
+--
+-- PostgreSQL database dump complete
+--
+
